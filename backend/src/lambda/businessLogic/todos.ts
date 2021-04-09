@@ -63,7 +63,7 @@ export async function deleteTodo(
 
   const userId = getUserId(jwtToken)
 
-  return await todoAccess.deleteTodo(todoId)
+  return await todoAccess.deleteTodo(todoId, userId)
 }
 
 export async function getTodos(
