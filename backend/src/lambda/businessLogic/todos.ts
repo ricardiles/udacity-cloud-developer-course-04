@@ -11,8 +11,8 @@ interface CreateTodoRequest {
 
 const todoAccess = new TodoAccess()
 
-export async function getAllTodos(): Promise<TodoItem[]> {
-  return todoAccess.getAllTodos()
+export async function getAllTodos(userId: string): Promise<TodoItem[]> {
+  return todoAccess.getAllTodos(userId)
 }
 
 export async function createTodo(
@@ -31,4 +31,24 @@ export async function createTodo(
     done: true,
     createdAt: new Date().toISOString()
   })
+}
+
+export async function deleteTodo(
+  todoId: string,
+  jwtToken: string
+): Promise<String> {
+
+  const userId = getUserId(jwtToken)
+
+  return await todoAccess.deleteTodo(todoId)
+}
+
+export async function getTodos(
+  jwtToken: string
+): Promise<TodoItem> {
+
+  const userId = <string> getUserId(jwtToken)
+  
+  return await getAllTodos(userId)[0]
+
 }

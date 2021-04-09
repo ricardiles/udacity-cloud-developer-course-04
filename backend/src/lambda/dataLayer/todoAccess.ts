@@ -13,11 +13,14 @@ export class TodoAccess {
     private readonly todosTable = process.env.TODOS_TABLE) {
   }
 
-  async getAllTodos(): Promise<TodoItem[]> {
+  async getAllTodos(userId: string): Promise<TodoItem[]> {
     console.log('Getting all todos')
 
     const result = await this.docClient.scan({
-      TableName: this.todosTable
+      TableName: this.todosTable,
+      ExpressionAttributeValues: {
+        "userId": userId
+      }
     }).promise()
 
     const items = result.Items
@@ -31,6 +34,17 @@ export class TodoAccess {
     }).promise()
 
     return todo
+  }
+
+  async deleteTodo(todoId: string): Promise<string> {
+    await this.docClient.delete({
+      TableName: this.todosTable,
+      Key: {
+        "todoId": todoId
+      }
+    }).promise()
+
+    return todoId
   }
 }
 
