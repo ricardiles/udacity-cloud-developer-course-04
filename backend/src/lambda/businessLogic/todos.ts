@@ -9,6 +9,11 @@ interface CreateTodoRequest {
     dueDate: string
   }
 
+  interface UpdateTodoRequest {
+    name: string
+    dueDate: string
+  }
+
 const todoAccess = new TodoAccess()
 
 export async function getAllTodos(userId: string): Promise<TodoItem[]> {
@@ -28,6 +33,24 @@ export async function createTodo(
     userId: userId,
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
+    done: true,
+    createdAt: new Date().toISOString()
+  })
+}
+
+export async function updateTodo(
+  updateTodoRequest: UpdateTodoRequest,
+  itemId: string,
+  jwtToken: string
+): Promise<TodoItem> {
+
+  const userId = getUserId(jwtToken)
+
+  return await todoAccess.updateTodo({
+    todoId: itemId,
+    userId: userId,
+    name: updateTodoRequest.name,
+    dueDate: updateTodoRequest.dueDate,
     done: true,
     createdAt: new Date().toISOString()
   })
