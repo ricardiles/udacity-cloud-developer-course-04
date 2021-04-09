@@ -1,16 +1,22 @@
 service:
-  name: serverless-todo-app
+  name: serverless-todo-app-ardiles
 
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-reqvalidator-plugin
+  - serverless-dynamodb-local
+  - serverless-offline
 
 provider:
   name: aws
   runtime: nodejs12.x
 
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  region: ${opt:region, 'us-east-2'}
+
+  environment:
+    TODOS_TABLE: Todos-${self:provider.stage}
 
 functions:
 
@@ -26,7 +32,6 @@ functions:
           path: todos
 
   # TODO: Configure this function
-  GetTodos:
   CreateTodo:
     handler: src/lambda/http/createTodo.handler
     events:
