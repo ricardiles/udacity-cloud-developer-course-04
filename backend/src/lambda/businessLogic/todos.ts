@@ -5,8 +5,11 @@ import { TodoAccess } from '../dataLayer/todoAccess'
 import { getUserId } from '../auth/utils'
 
 interface CreateTodoRequest {
+    createdAt: string
     name: string
     dueDate: string
+    done: boolean
+    attachmentUrl: string
   }
 
   interface UpdateTodoRequest {
@@ -16,8 +19,9 @@ interface CreateTodoRequest {
 
 const todoAccess = new TodoAccess()
 
-export async function getAllTodos(userId: string): Promise<TodoItem[]> {
-  return todoAccess.getAllTodos(userId)
+export async function getTodos(jwtToken: string): Promise<TodoItem[]> {
+  const userId = getUserId(jwtToken)
+  return todoAccess.getTodos(userId)
 }
 
 export async function createTodo(
@@ -29,7 +33,7 @@ export async function createTodo(
   const userId = getUserId(jwtToken)
 
   return await todoAccess.createTodo({
-    todoId: itemId,
+    id: itemId,
     userId: userId,
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
@@ -47,7 +51,7 @@ export async function updateTodo(
   const userId = getUserId(jwtToken)
 
   return await todoAccess.updateTodo({
-    todoId: itemId,
+    id: itemId,
     userId: userId,
     name: updateTodoRequest.name,
     dueDate: updateTodoRequest.dueDate,
@@ -66,12 +70,10 @@ export async function deleteTodo(
   return await todoAccess.deleteTodo(todoId, userId)
 }
 
-export async function getTodos(
+export async function generateUploadUrl(
+  todoId: string,
   jwtToken: string
-): Promise<TodoItem> {
-
-  const userId = <string> getUserId(jwtToken)
-  
-  return await getAllTodos(userId)[0]
-
+): Promise<String> {
+  const userId = getUserId(jwtToken)
+  return await todoAccess.generateUploadUrl(todoId, userId)
 }
