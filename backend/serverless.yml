@@ -22,8 +22,6 @@ provider:
     IMAGES_S3_BUCKET: serverless-todo-app-ardiles-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     AUTH_0_JWKS: https://dev-viwwox7z.us.auth0.com/.well-known/jwks.json
-    AUTH_0_SECRET_ID: Auth0Secret-${self:provider.stage}
-    AUTH_0_SECRET_FIELD: auth0Secret
   
   iamRoleStatements:
     - Effect: Allow
@@ -97,6 +95,7 @@ functions:
     events:
       - http:
           method: post
+          cors: true
           path: todos/{todoId}/attachment
 
 resources:
@@ -116,14 +115,14 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: todoId
             AttributeType: S
           - AttributeName: userId
             AttributeType: S
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
-          - AttributeName: id
+          - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}

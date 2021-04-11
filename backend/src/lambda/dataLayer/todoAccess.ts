@@ -49,7 +49,7 @@ export class TodoAccess {
   async createTodo(todo: TodoItem): Promise<TodoItem> {
     todo = {
       ...todo,
-      attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${todo.id}`
+      attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${todo.todoId}`
     }
     await this.docClient.put({
       TableName: this.todosTable,
@@ -65,7 +65,7 @@ export class TodoAccess {
         TableName : this.todosTable,
         Key: {
           "userId": todo.userId,
-          "id": todo.id
+          "todoId": todo.todoId
         },
         UpdateExpression: "SET #name = :name, #done = :done, #dueDate = :due",
         ExpressionAttributeNames:{
@@ -90,12 +90,28 @@ export class TodoAccess {
   }
 
   async deleteTodo(todoId: string, userId:string): Promise<string> {
-    await this.docClient.delete({
-      TableName: this.todosTable,
-      Key: {
-        "todoId": todoId,
-        "userId": userId
-      }
+
+    var params = {
+        TableName : this.todosTable,
+        Key:{
+          "todoId": todoId,
+          "userId": userId
+        },
+        ConditionExpression: "#idUser = :user and #idTodo = :todo",
+        ExpressionAttributeNames:{
+            "#idUser": "userId",
+            "#idTodo": "todoId"
+        },
+        ExpressionAttributeValues: {
+            ":user": userId,
+            ":todo": todoId
+        }
+    };
+
+    await this.docClient.delete(params, function(err) {
+        if (err) {
+            console.error("Unable to query. Error:", err);
+        } 
     }).promise()
 
     return todoId
@@ -109,7 +125,7 @@ export class TodoAccess {
         KeyConditionExpression: "#idUser = :user and #idTodo = :todo",
         ExpressionAttributeNames:{
             "#idUser": "userId",
-            "#idTodo": "id"
+            "#idTodo": "todoId"
         },
         ExpressionAttributeValues: {
             ":user": userId,

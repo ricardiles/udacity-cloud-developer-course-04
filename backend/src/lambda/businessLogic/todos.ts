@@ -34,7 +34,7 @@ export async function createTodo(
   const userId = getUserId(jwtToken)
 
   return await todoAccess.createTodo({
-    id: itemId,
+    todoId: itemId,
     userId: userId,
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
@@ -52,7 +52,7 @@ export async function updateTodo(
   const userId = getUserId(jwtToken)
 
   return await todoAccess.updateTodo({
-    id: itemId,
+    todoId: itemId,
     userId: userId,
     name: updateTodoRequest.name,
     dueDate: updateTodoRequest.dueDate,
