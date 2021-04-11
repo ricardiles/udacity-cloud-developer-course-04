@@ -15,6 +15,7 @@ interface CreateTodoRequest {
   interface UpdateTodoRequest {
     name: string
     dueDate: string
+    done: boolean
   }
 
 const todoAccess = new TodoAccess()
@@ -55,7 +56,7 @@ export async function updateTodo(
     userId: userId,
     name: updateTodoRequest.name,
     dueDate: updateTodoRequest.dueDate,
-    done: true,
+    done: updateTodoRequest.done,
     createdAt: new Date().toISOString()
   })
 }

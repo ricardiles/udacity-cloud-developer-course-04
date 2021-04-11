@@ -9,7 +9,7 @@ const s3 = new AWS.S3({
 })
 
 const bucketName = process.env.IMAGES_S3_BUCKET
-const urlExpiration = process.env.SIGNED_URL_EXPIRATION
+const urlExpiration = Number(process.env.SIGNED_URL_EXPIRATION)
 
 import { TodoItem } from '../../models/TodoItem'
 
@@ -60,18 +60,30 @@ export class TodoAccess {
   }
 
   async updateTodo(todo: TodoItem): Promise<TodoItem> {
-    await this.docClient.update({
-      TableName: this.todosTable,
-      Key: {
-        "todoId": todo.id
-      },
-      UpdateExpression: "set name = :n, dueDate=:due, done=:d",
-      ExpressionAttributeValues:{
-          ":n":todo.name,
-          ":due":todo.dueDate,
-          ":d":todo.done
-      },
-      ReturnValues:"UPDATED"
+    
+    var params = {
+        TableName : this.todosTable,
+        Key: {
+          "userId": todo.userId,
+          "id": todo.id
+        },
+        UpdateExpression: "SET #name = :name, #done = :done, #dueDate = :due",
+        ExpressionAttributeNames:{
+          "#name": "name",
+          "#done": "done",
+          "#dueDate": "dueDate"
+        },
+        ExpressionAttributeValues:{
+            ":name": todo.name,
+            ":done": todo.done,
+            ":due": todo.dueDate
+        },
+        ReturnValues:"UPDATED_NEW"
+    };
+    await this.docClient.update(params, function(err) {
+        if (err) {
+            console.error("Unable to query. Error:", err);
+        } 
     }).promise()
 
     return todo
@@ -90,21 +102,29 @@ export class TodoAccess {
   }
 
   async generateUploadUrl(todoId: string, userId:string): Promise<string> {
-    let validated: boolean = false
-    await this.docClient.get({
-      TableName: this.todosTable,
-      Key:{
-        "userId": userId,
-        "todoId": todoId
-      }
-    },function(err, data) {
-      if (err) {
-        validated = false
-      } else {
-        if(data){
-          validated = true
+    let validated: boolean
+
+    var params = {
+        TableName : this.todosTable,
+        KeyConditionExpression: "#idUser = :user and #idTodo = :todo",
+        ExpressionAttributeNames:{
+            "#idUser": "userId",
+            "#idTodo": "id"
+        },
+        ExpressionAttributeValues: {
+            ":user": userId,
+            ":todo": todoId
         }
-      }
+    };
+
+    await this.docClient.query(params, function(err) {
+        if (err) {
+            console.error("Unable to query. Error:", err);
+            validated = false
+        } else {
+            console.log("Query succeeded.");
+            validated = true
+        }
     }).promise()
 
     if (validated){

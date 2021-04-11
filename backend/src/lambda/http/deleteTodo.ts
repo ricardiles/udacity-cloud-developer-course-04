@@ -12,7 +12,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const split = authorization.split(' ')
   const jwtToken = split[1]
 
-  const delItem = await deleteTodo(todoId, jwtToken)
+  await deleteTodo(todoId, jwtToken)
 
   return {
     statusCode: 201,
@@ -21,7 +21,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      "delItem": delItem
     })
   }
 }
