@@ -10,16 +10,16 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const split = authorization.split(' ')
   const jwtToken = split[1]
 
-  const allItems = await getTodos(jwtToken)
+  const items = await getTodos(jwtToken)
 
   return {
-    statusCode: 201,
+    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      allItems
+      items
     })
   }
 }
