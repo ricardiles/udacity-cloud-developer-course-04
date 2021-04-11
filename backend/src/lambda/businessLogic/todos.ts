@@ -38,7 +38,7 @@ export async function createTodo(
     userId: userId,
     name: createTodoRequest.name,
     dueDate: createTodoRequest.dueDate,
-    done: true,
+    done: false,
     createdAt: new Date().toISOString()
   })
 }

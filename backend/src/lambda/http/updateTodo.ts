@@ -17,11 +17,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   await updateTodo(updatedTodo, todoId, jwtToken)
 
   return {
-    statusCode: 201,
+    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Credentials': true
+      'Access-Control-Allow-Credentials': true,
+      'Access-Control-Allow-Methods': 'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT',
+      'Accept-Patch': 'application/json'
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({
+    })
   }
 }
