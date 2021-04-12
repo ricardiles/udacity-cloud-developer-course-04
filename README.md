@@ -65,28 +65,56 @@ export const authConfig = {
 I used folder structure learned in class:
 
     .
-    ├── deployment_screenshots  # All screnshots of the work done.
+    ├── backend  # Serveless application
+    │   ├── models  
+    │   │   ├── create-todo-request.json  # Used to validate create request
+    │   │   └── update-todo-request.json  # Used to validate update request
+    │   ├── src 
+    │   │   ├── auth
+    │   │   │   ├── Jwt.ts  # Interface of Jwt
+    │   │   │   ├── JwtPayload.ts # Interface of Jwt payload
+    │   │   │   └── utils.ts
+    │   │   ├── lambda
+    │   │   │   ├── auth
+    |   │   │   │   ├── auth0Authorizer.ts  # auth0 functions with jwksUrl validation
+    |   │   │   │   └── utils.ts
+    │   │   │   ├── businessLogic
+    |   │   │   │   └── todos.ts # Logic layer that connects Data layer with Endpoints layer
+    │   │   │   ├── dataLayer
+    |   │   │   │   └── todoAccess.ts  # Data layer handles connections to DynamoDB and S3
+    │   │   │   ├── http
+    |   │   │   │   ├── createTodo.ts
+    |   │   │   │   ├── deleteTodo.ts
+    |   │   │   │   ├── generateUploadUrl.ts
+    |   │   │   │   ├── getTOdos.ts
+    |   │   │   │   └── updateTodo.ts
+    │   │   │   └── utils.ts
+    │   │   ├── models
+    │   │   │   ├── TodoItem.ts  # Model of Item
+    │   │   │   └── TodoUpdate.ts  # Model of update data
+    │   │   ├── requests
+    │   │   │   ├── CreateTodoRequest.ts
+    │   │   │   └── UpdateTodoRequest.ts
+    │   │   └── utils
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   ├── serveless.yml
+    │   ├── tsconfig.json
+    │   └── webpack.config.js
+    ├── client
     │   └── ...  
-    ├── src                     # Source files 
-    │   ├── config
-    │   │   └── config.ts
-    │   ├── controllers
-    │   │   └── v0
-    │   │   │   ├── image-filter
-    │   │   │   │   ├── routes
-    │   │   │   │   │   ├── util
-    │   │   │   │   │   │   └── ...
-    │   │   │   │   │   └── image-filter.router.ts
-    │   │   │   ├── index.router.ts
-    │   │   │   └── model.router.ts
-    │   ├── routes
-    │   ├── server.ts 
-    │   └── ...    
-    ├── cloud-cdnd-c2-final-ricardo-ardiles.postman_collection.json  
-    ├── package.json                 
-    ├── tsconfig.json
-    ├── README.md
+    ├── images
+    ├── Final Project.postman_collection.json
     └── ...
+
+
+## Postman Collection
+
+In the top of the repository there is a postman collection
+```
+Final Project.postman_collection.json
+```
+That contains examples of the use of the endpoints and examples generated.
 
 ## Images
 
